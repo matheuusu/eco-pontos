@@ -1,10 +1,14 @@
-import prisma from "../../prisma"
+import prisma from "../../utils/prisma"
 
 class ListUsersService {
   async execute() {
-    const users = await prisma.users.findMany()
+    try {
+      const users = await prisma.user.findMany()
 
-    return users
+      return users
+    } catch (err) {
+      throw new Error("Internal Server Error")
+    }
   }
 }
 

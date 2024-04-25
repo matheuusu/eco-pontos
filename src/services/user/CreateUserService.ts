@@ -1,4 +1,4 @@
-import prisma from "../../prisma"
+import prisma from "../../utils/prisma"
 
 interface CreateUserProps {
   name: string
@@ -8,15 +8,19 @@ interface CreateUserProps {
 
 class CreateUserService {
   async execute({ name, email, password }: CreateUserProps) {
-    const user = await prisma.users.create({
-      data: {
-        name,
-        email,
-        password,
-      },
-    })
+    try {
+      const user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          password,
+        },
+      })
 
-    return user
+      return user.id
+    } catch (err) {
+      throw new Error("Internal Server Error")
+    }
   }
 }
 

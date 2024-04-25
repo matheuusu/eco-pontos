@@ -1,4 +1,4 @@
-import prisma from "../../prisma"
+import prisma from "../../utils/prisma"
 
 interface FindUserPros {
   id: string
@@ -6,13 +6,21 @@ interface FindUserPros {
 
 class FindUserService {
   async execute({ id }: FindUserPros) {
-    const findUser = await prisma.users.findUnique({
-      where: {
-        id: id,
-      },
-    })
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: id,
+        },
+      })
 
-    return findUser
+      if (!user) {
+        throw new Error("User was not found")
+      }
+
+      return user
+    } catch (err) {
+      throw new Error("Internal Server Error")
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import prisma from "../../prisma"
+import prisma from "../../utils/prisma"
 
 interface DeleteUserProps {
   id: string
@@ -6,19 +6,25 @@ interface DeleteUserProps {
 
 class DeleteUserService {
   async execute({ id }: DeleteUserProps) {
-    const user = await prisma.users.findUnique({
-      where: {
-        id: id,
-      },
-    })
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id },
+      })
 
-    await prisma.users.delete({
-      where: {
-        id: user?.id,
-      },
-    })
+      if (!user) {
+        throw new Error("User was not found")
+      }
 
-    return { message: "usuario deletado" }
+      await prisma.user.delete({
+        where: {
+          id: user.id,
+        },
+      })
+
+      return { message: "User has deleted" }
+    } catch (err) {
+      throw new Error("Internal Server Error")
+    }
   }
 }
 

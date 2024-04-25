@@ -4,17 +4,27 @@ import { z } from "zod"
 
 class CreateUserController {
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const createUserSchema = z.object({
-      name: z.string().min(3),
-      email: z.string(),
-      password: z.string(),
-    })
+    try {
+      const createUserSchema = z.object({
+        name: z.string().min(3),
+        email: z.string().email(),
+        password: z.string().min(8),
+      })
 
-    const { name, email, password } = createUserSchema.parse(request.body)
-    const createUserService = new CreateUserService()
-    const user = await createUserService.execute({ name, email, password })
+      const { execute: createUserServiceExecute } = new CreateUserService()
 
-    reply.status(201).send(user)
+      const { name, email, password } = createUserSchema.parse(request.body)
+
+      const user = createUserServiceExecute({ name, email, password })
+
+      reply.status(201).send(user)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        reply.status(400).send(error.errors)
+      } else {
+        reply.status(500).send("Internal Server Error")
+      }
+    }
   }
 }
 
