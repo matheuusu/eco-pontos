@@ -9,9 +9,14 @@ const start = async () => {
   await app.register(routes)
 
   try {
-    await app.listen({ port: 3333 }).then(() => {
-      console.log("server is running")
-    })
+    await app
+      .listen({
+        host: "0.0.0.0",
+        port: 3333,
+      })
+      .then(() => {
+        console.log("server is running")
+      })
   } catch (err) {
     process.exit(1)
   }
