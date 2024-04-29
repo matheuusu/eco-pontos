@@ -12,7 +12,7 @@ const start = async () => {
     await app
       .listen({
         host: "0.0.0.0",
-        port: 3333,
+        port: process.env.PORT ? Number(process.env.PORT) : 3333,
       })
       .then(() => {
         console.log("server is running")
